@@ -10,11 +10,11 @@ Both of these bugs are related to resizing the Module (passing in a DataBatch th
 To run the scala bug examples call `sbt run` from inside the `scala/` directory and select the test you want to run. 
 To run examples in OSX instead of LINUX change the imports found in `scala/project/Dependencies.scala` from the Linux version to the OSX version. 
 
-# TestBug1.scala
+# TestBug1.scala [issue link](https://github.com/apache/incubator-mxnet/issues/10866)
 Create and bind a MXNet Module with batch size `N`. Proceed to resize the net to some input `NEW_N` batch size where `NEW_N < N`. Resize the Module back to the original batch size where `NEW_N == n` The output of the net will return for the wrong input size (batch size of `NEW_N` instead of `N`).
 
 You can avoid this bug by initially binding your Module to `N+1` and than resize all you want up to your desired `N` value.
-# TestBug2.scala
+# TestBug2.scala [issue link](https://github.com/apache/incubator-mxnet/issues/10867)
 The resize call is leaking memory on the native side.
 
 Create and bind a MXNet Module with batch size `N+1` and proceed to loop and pass DataBatches to it that require the Module to resize before performing the forward pass. Monitor the system resources (With htop, nvidia-smi, jvmtop) and you will notice the used system memory in htop will start to grow, but not the jvm heap size (the system memory usages grows beyond the set max JVM heap size) or GPU memory usage. This will continue until your system runs out of memory and there is a crash or the JVM is killed clearing all of the leaked used system memory with it.
