@@ -4,8 +4,8 @@ import com.sksamuel.scrimage.{Image, ImageMetadata, ScaleMethod}
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
-import ml.dmlc.mxnet.module.Module
-import ml.dmlc.mxnet.{Context, DataBatch, DataDesc, NDArray, Shape, Symbol, module, Model}
+import org.apache.mxnet.module.Module
+import org.apache.mxnet.{Context, DataBatch, DataDesc, NDArray, Shape, Symbol, module, Model}
 import scala.collection.mutable
 
 object TestNoBug  {
