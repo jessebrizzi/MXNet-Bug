@@ -33,9 +33,9 @@ def predict(fname, batchSize):
         assert(j == 281 or j == 282) # its a cat
 
 max_batch_size = 32
-ctx = mx.gpu(0)
+ctx = mx.cpu(0)
 
-sym, arg_params, aux_params = mx.model.load_checkpoint('resnet-152', 0)
+sym, arg_params, aux_params = mx.model.load_checkpoint('squeezenet-v1.1', 0)
 mod = mx.mod.Module(symbol=sym, context=ctx, label_names=None)
 mod.bind(for_training=False, data_shapes=[('data', (max_batch_size,3,224,224))], 
          label_shapes=mod._label_shapes)

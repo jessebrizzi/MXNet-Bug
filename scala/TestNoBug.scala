@@ -12,8 +12,8 @@ object TestNoBug  {
   val WIDTH = 224
   val HEIGHT = 224
   val CHANNELS = 3
-  val MAX_BATCH_SIZE = 32
-  val CONTEXT = Context.gpu(0)
+  val MAX_BATCH_SIZE = 100
+  val CONTEXT = Context.cpu(0)
 
   def loadImageIntoImageBuffer(filename: String): BufferedImage = {
     val img = ImageIO.read(new File(filename))
@@ -71,19 +71,12 @@ object TestNoBug  {
   }
 
   def main(args: Array[String]): Unit = {
-
-    val r = new scala.util.Random(8675309)
-
     // make net
     val (symbol, argParams, auxParams) = Model.loadCheckpoint("../squeezenet-v1.1", 0)
     val model = new module.Module(symbolVar=symbol, labelNames=IndexedSeq.empty[String], contexts=CONTEXT)
     val dataShapes = IndexedSeq(DataDesc(
       name = "data",
-      shape= Shape(MAX_BATCH_SIZE, // dont need avoid Bug One since we are not resizing
-                   CHANNELS, 
-                   HEIGHT, 
-                   WIDTH
-                   )
+      shape = Shape(MAX_BATCH_SIZE, CHANNELS, HEIGHT, WIDTH)
     ))
     model.bind(dataShapes = dataShapes, forTraining = false)
     model.setParams(argParams, auxParams, allowExtra = false, allowMissing = false)
@@ -96,8 +89,8 @@ object TestNoBug  {
 
     println("Starting test")
 
-    0 to 1000000 foreach(i => {
-      val randomBatchSize = MAX_BATCH_SIZE // only passing in size that does not require resize. 
+    (1 to MAX_BATCH_SIZE).toList.reverse.foreach(i => { // THE DIFFERENCE BETWEEN BUG AND NO BUG IS THE ADDED `reverse`
+      val randomBatchSize = i
 
       val t0 = System.currentTimeMillis()
 
@@ -105,7 +98,7 @@ object TestNoBug  {
 
       val results = predict(model, input, randomBatchSize)
 
-      print (s"Batch Size $randomBatchSize ")
+      print (s"$i: Batch Size $randomBatchSize ")
       assert(results.size == randomBatchSize, "The correct number of feature vectors are returned.")
 
       results.foreach(result => {
@@ -115,5 +108,8 @@ object TestNoBug  {
       val t1 = System.currentTimeMillis()
       println(s"pred time ${t1 - t0} ms")
     })
+
+    println("Pausing execution so you can view memory usage")
+    val a=scala.io.StdIn.readChar()
   }
 }
