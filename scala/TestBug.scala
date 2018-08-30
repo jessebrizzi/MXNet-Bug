@@ -12,8 +12,8 @@ object TestBug {
   val WIDTH = 224
   val HEIGHT = 224
   val CHANNELS = 3
-  val MAX_BATCH_SIZE = 100
-  val CONTEXT = Context.cpu(0)
+  val MAX_BATCH_SIZE = 32
+  val CONTEXT = Context.gpu(0)
 
   def loadImageIntoImageBuffer(filename: String): BufferedImage = {
     val img = ImageIO.read(new File(filename))
@@ -71,6 +71,9 @@ object TestBug {
   }
 
   def main(args: Array[String]): Unit = {
+
+    val r = new scala.util.Random(8675309)
+
     // make net
     val (symbol, argParams, auxParams) = Model.loadCheckpoint("../squeezenet-v1.1", 0)
     val model = new module.Module(symbolVar=symbol, labelNames=IndexedSeq.empty[String], contexts=CONTEXT)
@@ -89,8 +92,8 @@ object TestBug {
 
     println("Starting test")
 
-    (1 to MAX_BATCH_SIZE).toList.foreach(i => {
-      val randomBatchSize = i
+    (1 to 10000).toList.foreach(i => {
+      val randomBatchSize = r.nextInt(MAX_BATCH_SIZE) + 1
 
       val t0 = System.currentTimeMillis()
 

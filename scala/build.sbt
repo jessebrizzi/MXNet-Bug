@@ -11,3 +11,5 @@ scalaVersion := "2.11.11"
 sbtVersion := "1.1"
 
 libraryDependencies ++= Seq(mxnet, scrimage)
+
+resolvers += Resolver.mavenLocal
