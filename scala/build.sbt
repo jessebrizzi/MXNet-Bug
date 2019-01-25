@@ -12,4 +12,4 @@ sbtVersion := "1.1"
 
 libraryDependencies ++= Seq(mxnet, scrimage)
 
-resolvers += Resolver.mavenLocal
+resolvers += "Apache Snapshot" at "https://repository.apache.org/content/groups/snapshots"
