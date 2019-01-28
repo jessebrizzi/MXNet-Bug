@@ -10,6 +10,10 @@ This bug is related to resizing the Module (passing in a DataBatch that has a di
 To run the scala bug examples call `sbt run` from inside the `scala/` directory and select the test you want to run. 
 To run examples in OSX instead of LINUX change the imports found in `scala/project/Dependencies.scala` from the Linux version to the OSX version. 
 
+To standardize the environment for testing, included is a `Dockerfile` and bash script `run_docker.sh` that will build the docker image, install all needed deps for MXNet, all of the tools for testing the memory leak (htop, JVMTop, screen, whatever), and start up the container with Nvidia-Docker with this repositories code.
+
+Modifications to the Docker file are needed to switch between different versions of published MXNet versions. See the dockerfile for instructions.
+
 # TestBug.scala [issue link](https://github.com/apache/incubator-mxnet/issues/10867)
 The resize call is leaking memory on the native side.
 
